@@ -1,0 +1,43 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GF_SECURITY_ADMIN_PASSWORD}
+      GF_DATABASE_TYPE: postgres
+      GF_DATABASE_HOST: timescaledb:5432
+      GF_DATABASE_NAME: ${DB_NAME}  # Nome do banco de dados do Grafana
+      GF_DATABASE_USER: ${DB_USER}
+      GF_DATABASE_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - grafana-config:/etc/grafana
+      - grafana-logs:/var/log/grafana
+    networks:
+      - grafana-network
+
+  timescaledb:
+    image: timescale/timescaledb-ha:pg15-latest  # Usa PostgreSQL 15 com TimescaleDB
+    container_name: timescaledb
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}  # Nome do banco de dados no TimescaleDB
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - timescaledb-data:/var/lib/postgresql/data
+    networks:
+      - grafana-network
+
+volumes:
+  grafana-data:
+  grafana-config:
+  grafana-logs:
+  timescaledb-data:
+
+networks:
+  grafana-network:
+    driver: bridge
