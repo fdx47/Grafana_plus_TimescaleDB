@@ -20,7 +20,7 @@ services:
       - grafana-network
 
   timescaledb:
-    image: timescale/timescaledb-ha:pg165-latest  # Usa PostgreSQL 16 com TimescaleDB
+    image: timescale/timescaledb-ha:pg16-latest  # Usa PostgreSQL 16 com TimescaleDB
     container_name: timescaledb
     restart: unless-stopped
     environment:
